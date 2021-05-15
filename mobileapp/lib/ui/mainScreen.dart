@@ -1,7 +1,8 @@
+import 'package:countup/countup.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobileapp/businessLogic/IRTCalculator.dart';
 import 'package:mobileapp/ui/common.dart';
 
 class MainScreen extends StatefulWidget {
@@ -10,11 +11,20 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  IRTCalculator calculator;
+
   double baseSalary;
   double taxableIncome;
+  double zeroCount = 0;
 
   TextEditingController baseSalaryController = TextEditingController();
   TextEditingController taxableIncomeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    calculator = new IRTCalculator();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,31 +37,22 @@ class _MainScreenState extends State<MainScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Flexible(
-                flex: 2,
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      appbar(),
-
-                      //Salario Base
-                      Container(
-                          margin: EdgeInsets.only(top: 25),
-                          child: Text("Salário Base",
-                              style: smallTextStyle(
-                                  Colors.grey, FontWeight.w300))),
-                      customTextField(baseSalaryController),
-
-                      //subsidio tributavel
-                      Container(
-                          margin: EdgeInsets.only(top: 25),
-                          child: Text("Subsídio Tributável",
-                              style: smallTextStyle(
-                                  Colors.grey, FontWeight.w300))),
-                      customTextField(taxableIncomeController),
-                    ],
-                  ),
-                )),
+              flex: 2,
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    appbar(),
+                    //Salario Base
+                    customHeader("Salário Base"),
+                    customTextField(baseSalaryController),
+                    //subsidio tributavel
+                    customHeader("Subsídio Tributável"),
+                    customTextField(taxableIncomeController),
+                  ],
+                ),
+              ),
+            ),
 
             //result table
             Expanded(
@@ -61,30 +62,47 @@ class _MainScreenState extends State<MainScreen> {
                     children: [
                       resultListHeader("Tabela de Resultados",
                           Icon(Icons.keyboard_arrow_down)),
-                      resultListItem("Valor Bruto", "0.00 AOA", mTextColor),
-                      resultListItem("INSS", "0.00 AOA", mTextColor),
                       resultListItem(
-                          "Valor Tributavel", "0.00 AOA", mTextColor),
-                      resultListItem("IRT", "0.00 AOA", mTextColor),
-                      resultListItem("Valor Liquido", "0.00 AOA", Colors.green),
+                          "Valor Bruto", calculator.grossIncome, mTextColor),
+                      resultListItem("INSS", calculator.inss, mTextColor),
+                      resultListItem("Valor Tributável",
+                          calculator.taxableAmount, mTextColor),
+                      resultListItem("IRT", calculator.irt, mTextColor),
+                      resultListItem(
+                          "Valor Líquido", calculator.netSalary, Colors.green),
 
                       //additional information
                       SizedBox(height: 15),
                       resultListHeader("Informação Adicional",
                           Icon(Icons.keyboard_arrow_down)),
-                      resultListItem("Parcela Fixe", "0.00 AOA", mTextColor),
-                      resultListItem("Excesso", "0.00 AOA", mTextColor),
-                      resultListItem("Taxa", "10%", mTextColor),
+                      resultListItem(
+                          "Parcela Fixe", calculator.fixedParcel, mTextColor),
+                      resultListItem("Excesso", calculator.excess, mTextColor),
+                      resultListItem("Taxa", calculator.tax, mTextColor, "%"),
                     ],
                   ),
                 )),
 
             //button
-            customFullButton(context, 'Calcular IRT')
+            InkWell(
+              onTap: () {
+                baseSalary = _prepareDouble(baseSalaryController.text);
+                taxableIncome = _prepareDouble(taxableIncomeController.text);
+                setState(() {
+                  calculator.calculate(baseSalary, taxableIncome);
+                });
+              },
+              child: customFullButton(context, 'Calcular IRT'),
+            )
           ],
         ),
       ),
     );
+  }
+
+  //if input is not right format convert it back to 0
+  double _prepareDouble(input) {
+    return (input.isEmpty) ? 0 : double.parse(input);
   }
 
   Widget resultListHeader(String title, Widget trailing) {
@@ -100,16 +118,23 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget resultListItem(String title, String data, Color color) {
+  Widget resultListItem(String title, double value, Color color,
+      [String suffix = "AOA"]) {
     return Container(
       margin: EdgeInsets.only(right: 5),
       child: ListTile(
         minLeadingWidth: 0,
         leading: Icon(Icons.info_outline, color: mTextColor),
         title: Text(title, style: TextStyle(color: Colors.grey, fontSize: 14)),
-        trailing: Text(data,
-            style: TextStyle(
-                color: color, fontSize: 14, fontWeight: FontWeight.bold)),
+        trailing: Countup(
+          begin: zeroCount,
+          end: value,
+          suffix: suffix,
+          duration: Duration(seconds: 1),
+          separator: ',',
+          style: TextStyle(
+              color: color, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -125,5 +150,12 @@ class _MainScreenState extends State<MainScreen> {
         icon: Icon(FontAwesomeIcons.thLarge, color: Colors.blueGrey, size: 16),
       ),
     );
+  }
+
+  Widget customHeader(String header) {
+    return Container(
+        margin: EdgeInsets.only(top: 15),
+        child:
+            Text(header, style: smallTextStyle(Colors.grey, FontWeight.w300)));
   }
 }
