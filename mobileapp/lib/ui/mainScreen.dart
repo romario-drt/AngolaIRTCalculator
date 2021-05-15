@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp/businessLogic/IRTCalculator.dart';
+import 'package:mobileapp/constants/concepts.dart';
+import 'package:mobileapp/ui/InformationScreen.dart';
 import 'package:mobileapp/ui/common.dart';
 
 class MainScreen extends StatefulWidget {
@@ -14,11 +16,11 @@ class _MainScreenState extends State<MainScreen> {
   IRTCalculator calculator;
 
   double baseSalary;
-  double taxableIncome;
+  double taxableBonus;
   double zeroCount = 0;
 
   TextEditingController baseSalaryController = TextEditingController();
-  TextEditingController taxableIncomeController = TextEditingController();
+  TextEditingController taxableBonusController = TextEditingController();
 
   @override
   void initState() {
@@ -45,10 +47,18 @@ class _MainScreenState extends State<MainScreen> {
                     appbar(),
                     //Salario Base
                     customHeader("Salário Base"),
-                    customTextField(baseSalaryController),
+                    customTextField(baseSalaryController, () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => InformationScreen(
+                              "Salário Base", ccpBaseSalary)));
+                    }),
                     //subsidio tributavel
                     customHeader("Subsídio Tributável"),
-                    customTextField(taxableIncomeController),
+                    customTextField(taxableBonusController, () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => InformationScreen(
+                              "Subsídio Tributável", ccpTaxableBonus)));
+                    }),
                   ],
                 ),
               ),
@@ -63,22 +73,47 @@ class _MainScreenState extends State<MainScreen> {
                       resultListHeader("Tabela de Resultados",
                           Icon(Icons.keyboard_arrow_down)),
                       resultListItem(
-                          "Valor Bruto", calculator.grossIncome, mTextColor),
-                      resultListItem("INSS", calculator.inss, mTextColor),
-                      resultListItem("Valor Tributável",
-                          calculator.taxableAmount, mTextColor),
-                      resultListItem("IRT", calculator.irt, mTextColor),
+                          InformationScreen("Valor Bruto", ccpGrossIncome),
+                          "Valor Bruto",
+                          calculator.grossIncome,
+                          mTextColor),
+
+                      resultListItem(InformationScreen("INSS", ccpGrossIncome),
+                          "INSS", calculator.inss, mTextColor),
+
                       resultListItem(
-                          "Valor Líquido", calculator.netSalary, Colors.green),
+                          InformationScreen("Valor Tributável", ccpGrossIncome),
+                          "Valor Tributável",
+                          calculator.taxableAmount,
+                          mTextColor),
+
+                      resultListItem(InformationScreen("IRT", ccpGrossIncome),
+                          "IRT", calculator.irt, mTextColor),
+
+                      resultListItem(
+                          InformationScreen("Valor Líquido", ccpGrossIncome),
+                          "Valor Líquido",
+                          calculator.netSalary,
+                          Colors.green),
 
                       //additional information
                       SizedBox(height: 15),
                       resultListHeader("Informação Adicional",
                           Icon(Icons.keyboard_arrow_down)),
                       resultListItem(
-                          "Parcela Fixe", calculator.fixedParcel, mTextColor),
-                      resultListItem("Excesso", calculator.excess, mTextColor),
-                      resultListItem("Taxa", calculator.tax, mTextColor, "%"),
+                          InformationScreen("Parcela Fixe", ccpGrossIncome),
+                          "Parcela Fixe",
+                          calculator.fixedParcel,
+                          mTextColor),
+
+                      resultListItem(
+                          InformationScreen("Excesso", ccpGrossIncome),
+                          "Excesso",
+                          calculator.excess,
+                          mTextColor),
+
+                      resultListItem(InformationScreen("Taxa", ccpGrossIncome),
+                          "Taxa", calculator.tax, mTextColor, "%"),
                     ],
                   ),
                 )),
@@ -87,9 +122,9 @@ class _MainScreenState extends State<MainScreen> {
             InkWell(
               onTap: () {
                 baseSalary = _prepareDouble(baseSalaryController.text);
-                taxableIncome = _prepareDouble(taxableIncomeController.text);
+                taxableBonus = _prepareDouble(taxableBonusController.text);
                 setState(() {
-                  calculator.calculate(baseSalary, taxableIncome);
+                  calculator.calculate(baseSalary, taxableBonus);
                 });
               },
               child: customFullButton(context, 'Calcular IRT'),
@@ -118,22 +153,28 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget resultListItem(String title, double value, Color color,
+  Widget resultListItem(Widget screen, String title, double value, Color color,
       [String suffix = "AOA"]) {
-    return Container(
-      margin: EdgeInsets.only(right: 5),
-      child: ListTile(
-        minLeadingWidth: 0,
-        leading: Icon(Icons.info_outline, color: mTextColor),
-        title: Text(title, style: TextStyle(color: Colors.grey, fontSize: 14)),
-        trailing: Countup(
-          begin: zeroCount,
-          end: value,
-          suffix: suffix,
-          duration: Duration(seconds: 1),
-          separator: ',',
-          style: TextStyle(
-              color: color, fontSize: 14, fontWeight: FontWeight.bold),
+    return InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 5),
+        child: ListTile(
+          minLeadingWidth: 0,
+          leading: Icon(Icons.info_outline, color: mTextColor),
+          title:
+              Text(title, style: TextStyle(color: Colors.grey, fontSize: 14)),
+          trailing: Countup(
+            begin: zeroCount,
+            end: value,
+            suffix: suffix,
+            duration: Duration(seconds: 1),
+            separator: ',',
+            style: TextStyle(
+                color: color, fontSize: 14, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );

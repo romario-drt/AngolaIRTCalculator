@@ -21,6 +21,10 @@ TextStyle xLargeTextStyle(Color color, [FontWeight fw = FontWeight.normal]) {
   return TextStyle(fontSize: SIZE_XLARGE, color: color, fontWeight: fw);
 }
 
+TextStyle mediumTextStyle(Color color, [FontWeight fw = FontWeight.normal]) {
+  return TextStyle(fontSize: SIZE_MEDIUM, color: color, fontWeight: fw);
+}
+
 Widget customFullButton(BuildContext context, String text) {
   return Container(
     margin: EdgeInsets.only(top: 10),
@@ -56,9 +60,7 @@ Widget simpleAppBar(BuildContext context) {
   );
 }
 
-Widget customTextField(
-  TextEditingController controller,
-) {
+Widget customTextField(TextEditingController controller, Function action) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 30),
     child: TextField(
@@ -71,7 +73,9 @@ Widget customTextField(
           suffixStyle: xLargeTextStyle(Colors.black, FontWeight.w400),
           suffix: Text("AOA",
               style: xLargeTextStyle(Colors.black, FontWeight.w400)),
-          prefixIcon: Icon(Icons.info_outline, color: mTextColor),
+          prefixIcon: IconButton(
+              onPressed: action,
+              icon: Icon(Icons.info_outline, color: mTextColor)),
           border: InputBorder.none,
           hintText: "0.00"),
       textAlign: TextAlign.center,
