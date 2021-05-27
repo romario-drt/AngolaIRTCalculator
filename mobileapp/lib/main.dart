@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mobileapp/ui/HomeScreen.dart';
 
 import 'ui/mainScreen.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Angola Calculadora IRT',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
-      home: MainScreen(),
+      home: HomeScreen(),
     );
   }
 }

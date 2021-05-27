@@ -7,6 +7,8 @@ Color mTextColor2 = Colors.grey;
 Color mPrimaryColor = Color.fromARGB(255, 55, 126, 255);
 Color mSecondaryColor = Color.fromARGB(255, 241, 243, 246);
 
+const Color lighThemeBackground = Color(0xfff7f7f7);
+
 const SIZE_XSMALL = 12.0;
 const SIZE_SMALL = 15.0;
 const SIZE_MEDIUM = 18.0;

@@ -68,7 +68,26 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: mSecondaryColor,
 
           //apbar
-          appBar: _appbar(),
+          appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.white,
+              leading: IconButton(
+                  icon: Icon(Icons.chevron_left, color: mTextColor2, size: 22),
+                  onPressed: () => Navigator.pop(context)),
+              title: ListTile(
+                contentPadding: EdgeInsets.all(0),
+                title: Text("IRT",
+                    style: smallTextStyle(mTextColor, FontWeight.bold)),
+                subtitle: Text("Calculadora por conta de outrem",
+                    style: smallTextStyle(mTextColor2)),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon:
+                      Icon(FontAwesomeIcons.info, color: mTextColor, size: 16),
+                )
+              ]),
 
           //body
           body: Stack(
@@ -294,33 +313,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _appbar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.white,
-      title: ListTile(
-        title:
-            Text("Angola", style: TextStyle(color: Colors.black, fontSize: 14)),
-        subtitle: Text("Calculadora IRT",
-            style: TextStyle(color: Colors.black, fontSize: 14)),
-      ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.info_outlined, color: mTextColor2, size: 22),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(FontAwesomeIcons.calculator, color: mTextColor2, size: 16),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(FontAwesomeIcons.stream, color: mTextColor2, size: 16),
-        )
-      ],
     );
   }
 
