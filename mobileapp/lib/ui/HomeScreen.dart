@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobileapp/ui/IRTV2Screen.dart';
 import 'package:mobileapp/ui/mainScreen.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:supercharged/supercharged.dart';
@@ -23,8 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          title:
-              Text("CITA", style: mediumTextStyle(mTextColor, FontWeight.bold)),
+          title: Text("Menu Principal",
+              style: mediumTextStyle(mTextColor, FontWeight.bold)),
           actions: [
             IconButton(
               onPressed: () {},
@@ -59,10 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   //welcome
                   SizedBox(height: 30),
                   ListTile(
-                    title: Text("Bem-Vindo",
+                    title: Text("CITA",
                         style: xLargeTextStyle(mTextColor, FontWeight.bold)),
-                    subtitle: Text("Escolha abaixo a sua calculadora",
-                        style: mediumTextStyle(mTextColor2)),
+                    subtitle: Text("Calculadora de Impostos e Taxas Angolana",
+                        style: smallTextStyle(mTextColor2)),
                   ),
 
                   SizedBox(height: 30),
@@ -95,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       MainScreen()),
 
                   _calculatorCard(1.4, context, Icons.work_rounded, mTextColor,
-                      "Calculadora IRT", "Visual Alternativo", MainScreen())
+                      "Calculadora IRT", "Visual Alternativo", IRTV2Screen())
                 ],
               ),
             )

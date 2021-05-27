@@ -20,6 +20,10 @@ TextStyle smallTextStyle(Color color, [FontWeight fw = FontWeight.normal]) {
   return TextStyle(fontSize: SIZE_SMALL, color: color, fontWeight: fw);
 }
 
+TextStyle largeTextStyle(Color color, [FontWeight fw = FontWeight.normal]) {
+  return TextStyle(fontSize: SIZE_LARGE, color: color, fontWeight: fw);
+}
+
 TextStyle xLargeTextStyle(Color color, [FontWeight fw = FontWeight.normal]) {
   return TextStyle(fontSize: SIZE_XLARGE, color: color, fontWeight: fw);
 }
